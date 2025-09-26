@@ -1,4 +1,5 @@
-import type { BaseInterface } from "../interfaces/config.interface";
+import type { ZodError } from "zod";
+import type { BaseInterface } from "../config/config.interface.ts";
 
 export enum HttpCode {
   OK = 200,
@@ -15,7 +16,7 @@ export enum HttpCode {
   SERVICE_UNAVAILABLE = 503,
 }
 
-export type Services = "google" | "worker";
+export type Services = "internal";
 
 export interface BaseHttpErrorResponse {
   code: string;
@@ -23,7 +24,7 @@ export interface BaseHttpErrorResponse {
   message: string;
 }
 
-export interface HttpExternalServiceError extends BaseHttpErrorResponse {
+export interface ServiceFailureError extends BaseHttpErrorResponse {
   type: Services;
 }
 
@@ -32,16 +33,16 @@ export interface HttpConfigInterface {
 }
 
 export interface HttpErrorArgs extends BaseHttpErrorResponse {
-  externalError?: HttpExternalServiceError;
-  validationErrors?: object;
+  serviceFailure?: ServiceFailureError;
+  validationErrors?: ZodError;
   config?: HttpConfigInterface;
 }
 
 export class HttpError extends Error {
   public readonly code: string;
   public readonly httpCode: HttpCode;
-  public readonly externalError: HttpExternalServiceError | undefined;
-  public readonly validationErrors: object | undefined;
+  public readonly serviceFailure: ServiceFailureError | undefined;
+  public readonly validationErrors: ZodError | undefined;
   public readonly config: HttpConfigInterface | undefined;
 
   constructor(args: HttpErrorArgs) {
@@ -51,7 +52,7 @@ export class HttpError extends Error {
 
     this.code = args.code;
     this.httpCode = args.httpCode;
-    this.externalError = args.externalError;
+    this.serviceFailure = args.serviceFailure;
     this.validationErrors = args.validationErrors;
     this.config = args.config;
 
@@ -64,8 +65,8 @@ export class HttpError extends Error {
       message: this.message,
       httpCode: this.httpCode,
       validationErrors: this.validationErrors,
-      externalError:
-        c.environment !== "production" ? this.externalError : undefined,
+      serviceFailure:
+        c.environment !== "production" ? this.serviceFailure : undefined,
     };
   }
 }

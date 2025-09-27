@@ -1,5 +1,5 @@
-import type { ZodError } from "zod";
 import type { BaseInterface } from "../config/config.interface.ts";
+import type { $ZodFlattenedError } from "zod/v4/core";
 
 export enum HttpCode {
   OK = 200,
@@ -34,7 +34,7 @@ export interface HttpConfigInterface {
 
 export interface HttpErrorArgs extends BaseHttpErrorResponse {
   serviceFailure?: ServiceFailureError;
-  validationErrors?: ZodError;
+  validationErrors?: $ZodFlattenedError<any>;
   config?: HttpConfigInterface;
 }
 
@@ -42,7 +42,7 @@ export class HttpError extends Error {
   public readonly code: string;
   public readonly httpCode: HttpCode;
   public readonly serviceFailure: ServiceFailureError | undefined;
-  public readonly validationErrors: ZodError | undefined;
+  public readonly validationErrors: $ZodFlattenedError<any> | undefined;
   public readonly config: HttpConfigInterface | undefined;
 
   constructor(args: HttpErrorArgs) {

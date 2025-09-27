@@ -11,10 +11,10 @@ export class RequestError extends HttpError {
   }
 }
 
-export class InvalidRequestParameterError extends RequestError {
+export class InvalidRequestParameterError<T> extends RequestError {
   constructor(
     message = "One or multiple invalid request parameters were provided",
-    validationErrors?: $ZodFlattenedError<any>,
+    validationErrors?: $ZodFlattenedError<T>,
   ) {
     super({
       httpCode: HttpCode.BAD_REQUEST,

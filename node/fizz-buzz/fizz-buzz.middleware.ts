@@ -20,7 +20,7 @@ export const validateRandomQueryParam: MiddlewareHandler<{
 
     if (!parsed.success) {
       console.error("Validation failed:", z.flattenError(parsed.error));
-      throw new InvalidRequestParameterError(
+      throw new InvalidRequestParameterError<z.infer<typeof randomQuerySchema>>(
         undefined,
         z.flattenError(parsed.error),
       );
@@ -35,6 +35,6 @@ export const validateRandomQueryParam: MiddlewareHandler<{
       throw error;
     }
 
-    throw new InvalidRequestParameterError();
+    throw new InvalidRequestParameterError<z.infer<typeof randomQuerySchema>>();
   }
 };

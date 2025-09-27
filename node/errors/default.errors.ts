@@ -1,7 +1,6 @@
 import {
   HttpCode,
   HttpError,
-  type HttpConfigInterface,
   type HttpErrorArgs,
   type ServiceFailureError,
 } from "./app.errors.ts";
